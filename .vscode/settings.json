@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "my_board.h": "c",
+        "stm8s_conf.h": "c",
+        "uart2_user.h": "c",
+        "stm8s.h": "c"
+    }
+}
