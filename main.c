@@ -16,6 +16,8 @@ void main(void)
   
   GPIO_Config();
   CLK_16MHZ_HSE();
+  UART2_Init_User(9600);
+  UART2_Print("PHUCNAM");
   //GPIO_WriteHigh(GPIOB, VIBRATO | BUZZER);
   HC595_Write(0);
   HC595_Write(0);
@@ -23,45 +25,9 @@ void main(void)
 
   while (1)
   {
-      // Reset
-        GPIO_WriteHigh(GPIOB, DIGIT1 | DIGIT2 | DIGIT3);
-        GPIO_WriteHigh(GPIOC, DIGIT6 | DIGIT8);
-        GPIO_WriteHigh(GPIOE, DIGIT4 | DIGIT5 | DIGIT7);
-        HC595_Write(*(ROW1));
-        HC595_Write(*(ROW2));
-        HC595_Latch();
-        GPIO_WriteLow(GPIOB, DIGIT1);
-        GPIO_WriteLow(GPIOE, DIGIT5);
-        Delayms_TIMER4(2);
-        GPIO_WriteHigh(GPIOB, DIGIT1);
-        GPIO_WriteHigh(GPIOE, DIGIT5);
-
-        HC595_Write(*(ROW1+1));
-        HC595_Write(*(ROW2+1));
-        HC595_Latch();
-        GPIO_WriteLow(GPIOB, DIGIT2);
-        GPIO_WriteLow(GPIOC, DIGIT6);
-        Delayms_TIMER4(2);
-        GPIO_WriteHigh(GPIOB, DIGIT2);
-        GPIO_WriteHigh(GPIOC, DIGIT6);
-
-        HC595_Write(*(ROW1+2));
-        HC595_Write(*(ROW2+2));
-        HC595_Latch();
-        GPIO_WriteLow(GPIOB, DIGIT3);
-        GPIO_WriteLow(GPIOE, DIGIT7);
-        Delayms_TIMER4(2);
-        GPIO_WriteHigh(GPIOB, DIGIT3);
-        GPIO_WriteHigh(GPIOE, DIGIT7);
-        
-        HC595_Write(*(ROW1+3));
-        HC595_Write(*(ROW2+3));
-        HC595_Latch();
-        GPIO_WriteLow(GPIOE, DIGIT4);
-        GPIO_WriteLow(GPIOC, DIGIT8);
-        Delayms_TIMER4(2);
-        GPIO_WriteHigh(GPIOE, DIGIT4);
-        GPIO_WriteHigh(GPIOC, DIGIT8);
+      //SEGMENT_Display(ROW1,ROW2);
+    
+    //layms_TIMER4(500);
      
   }
 }
