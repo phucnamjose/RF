@@ -30,8 +30,13 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define TX_BUFFER_SIZE (countof(TxBuffer) - 1)
 /* Private macro -------------------------------------------------------------*/
+#define countof(x)  (sizeof(x)/sizeof(*(x)))
 /* Private variables ---------------------------------------------------------*/
+u8 TxBuffer[] = "PHUC NAM";
+
+__IO u8 TxCounter = 0;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -363,6 +368,12 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
     /* In order to detect unexpected events during development,
        it is recommended to set a breakpoint on the following instruction.
     */
+   UART2_SendData8(TxBuffer[TxCounter++]);
+
+   if(TxCounter == TX_BUFFER_SIZE)
+   {
+    UART2_ITConfig(UART2_IT_TXE, DISABLE);
+   }
   }
 
 /**
@@ -375,6 +386,9 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
     /* In order to detect unexpected events during development,
        it is recommended to set a breakpoint on the following instruction.
     */
+   u8 temp;
+   temp = (UART2_ReceiveData8() & 0x7F);
+   UART2_SendData8(temp);
   }
 #endif /* STM8S105*/
 
