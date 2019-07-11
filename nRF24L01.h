@@ -6,16 +6,16 @@
 
 #define BIT(x) (0x01 << (x))
 // For RF24 Module
-#define RF24_GPIO_PORT           (GPIOA)
-#define RF24_IRQ_GPIO_PINS      (GPIO_PIN_1)
-#define RF24_CE_GPIO_PINS       (GPIO_PIN_2)
-#define RF24_NSS_GPIO_PINS      (GPIO_PIN_3)
+#define RF24_GPIO_PORT           (GPIOC)
+#define RF24_IRQ_GPIO_PINS      (GPIO_PIN_1) //Port G 0
+#define RF24_CE_GPIO_PINS       (GPIO_PIN_3) // Port C 3
+#define RF24_CSN_GPIO_PINS      (GPIO_PIN_4) // Port C 4
 
-#define HIGH_CE GPIO_WriteHigh(GPIOA, RF24_CE_GPIO_PINS)
-#define LOW_CE GPIO_WriteLow(GPIOA, RF24_CE_GPIO_PINS)
+#define HIGH_CE GPIO_WriteHigh(GPIOC, RF24_CE_GPIO_PINS)
+#define LOW_CE GPIO_WriteLow(GPIOC, RF24_CE_GPIO_PINS)
 
-#define HIGH_CSN    GPIO_WriteHigh(GPIOA, RF24_NSS_GPIO_PINS)
-#define LOW_CSN     GPIO_WriteLow(GPIOA, RF24_NSS_GPIO_PINS)
+#define HIGH_CSN    GPIO_WriteHigh(GPIOC, RF24_CSN_GPIO_PINS)
+#define LOW_CSN     GPIO_WriteLow(GPIOC, RF24_CSN_GPIO_PINS)
 
 #define TX_ADDR_WITDH   5// Byte
 #define RX_ADDR_WITDH   5
@@ -155,31 +155,31 @@ static void Write_register_Multi(u8 reg,u8 *buf, u8 len);
 static void Write_register_Single(u8 reg, u8 value);
 static void Write_payload(u8 *buf, u8 len);
 static void Read_payload(u8 *buf, u8 len);
- void flush_rx(void);
- void flush_tx(void);
+extern void flush_rx(void);
+extern void flush_tx(void);
 
 
 // Public--------------------------------------
-void nRF24L01_Pin_Conf(void); // Set up SPI
-void RF24_Setup(void);
-void RF24_Chanel(u8 chanel);
+extern void nRF24L01_Pin_Conf(void); // Set up SPI
+extern void RF24_Setup(void);
+extern void RF24_Chanel(u8 chanel);
 
-void RF24_TX_Address(u8 *buf, u8 lenght_byte);
-void RF24_RX_Address(u8 *buf, u8 lenght_byte);
+extern void RF24_TX_Address(u8 *buf, u8 lenght_byte);
+extern void RF24_RX_Address(u8 *buf, u8 lenght_byte);
 
-void RF24_startListening(void);
-void RF24_stopListening(void);
+extern void RF24_startListening(void);
+extern void RF24_stopListening(void);
 
-void RF24_powerDown(void);
-void RF24_powerUp(void);
+extern void RF24_powerDown(void);
+extern void RF24_powerUp(void);
 
-u8 RF24_get_status(void);
+extern u8 RF24_get_status(void);
 extern void RF24_reset_status(void);
 
-void RF24_write_data(u8 *buf, u8 len);
-void RF24_read_data(u8 *buf, u8 len);
+extern void RF24_write_data(u8 *buf, u8 len);
+extern void RF24_read_data(u8 *buf, u8 len);
 
-u8 RF24_available(void);
+extern u8 RF24_available(void);
 
-void RF24_Information(void);
+extern void RF24_Information(void);
 #endif
