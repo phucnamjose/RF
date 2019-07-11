@@ -19,8 +19,8 @@ STM8S105C6T6
 #define DIGIT2  GPIO_PIN_0
 #define DIGIT3  GPIO_PIN_1
 #define DIGIT1  GPIO_PIN_2
-#define OVER      GPIO_PIN_3
-#define ZO    GPIO_PIN_4
+#define ZO      GPIO_PIN_3
+#define OVER    GPIO_PIN_4
 #define ADC     GPIO_PIN_5
 #define VIBRATO GPIO_PIN_6
 #define BUZZER  GPIO_PIN_7
@@ -37,17 +37,17 @@ STM8S105C6T6
 #define RDX GPIO_PIN_6
 // PORT E
 #define SEG_CLK GPIO_PIN_0
-//#define SEG_LATCH GPIO_PIN_1
-//#define SEG_DATA GPIO_PIN_2
+#define SEG_LATCH GPIO_PIN_3
 #define DIGIT7 GPIO_PIN_5
 #define DIGIT5 GPIO_PIN_6
 #define DIGIT4 GPIO_PIN_7
 // PORT G
 #define IRQ GPIO_PIN_0
+#define SEG_DATA GPIO_PIN_1
 
 /*Function prototypes -----------------------------------------------*/
 //Delay Function
-static inline void delay_us(uint16_t us);
+extern inline void delay_us(uint16_t us);
 void Delayms_TIMER4(u16 time_delay);
 //CLOCK Function
 void CLK_16MHZ_HSE(void);

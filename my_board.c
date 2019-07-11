@@ -1,7 +1,7 @@
 #include "my_board.h"
 #include <intrinsics.h>
 //#include "nRF24L01.h"
-static inline void delay_us(uint16_t us)
+extern inline void delay_us(uint16_t us)
 {
   uint32_t i;
   for (i = 0; i < (5*us); i++)
@@ -26,11 +26,11 @@ void GPIO_Config(void)
   /* PORT E */
   GPIO_DeInit(GPIOE);
   GPIO_Init(GPIOE, DIGIT4 | DIGIT5 | DIGIT7, GPIO_MODE_OUT_PP_HIGH_FAST);
-  //GPIO_Init(GPIOE, SEG_LATCH | SEG_DATA, GPIO_MODE_OUT_OD_LOW_FAST);// true Open-Drain
-  GPIO_Init(GPIOE, SEG_CLK, GPIO_MODE_OUT_PP_LOW_FAST);
+  GPIO_Init(GPIOE, SEG_CLK | SEG_LATCH, GPIO_MODE_OUT_PP_LOW_FAST);
   /* PORT G */
   GPIO_DeInit(GPIOG);
   GPIO_Init(GPIOG, IRQ, GPIO_MODE_IN_PU_NO_IT);
+  GPIO_Init(GPIOG, SEG_DATA, GPIO_MODE_OUT_PP_LOW_FAST);
 }
 
 
@@ -74,11 +74,11 @@ void HC595_Write(u8 Data)
     temp = Data & (1 << i);
     if(temp != 0)
     {
-      GPIO_WriteHigh(GPIOB, ZO);
+      GPIO_WriteHigh(GPIOG, SEG_DATA);
     }
     else
     {
-      GPIO_WriteLow(GPIOB, ZO);
+      GPIO_WriteLow(GPIOG, SEG_DATA);
     }
     delay_us(1);
     GPIO_WriteLow(GPIOE, SEG_CLK);
@@ -89,11 +89,9 @@ void HC595_Write(u8 Data)
 void HC595_Latch(void)
 {
   delay_us(1);
-  GPIO_WriteLow(GPIOB, OVER);
-  //GPIO_WriteLow(GPIOE, SEG_LATCH);
+  GPIO_WriteLow(GPIOE, SEG_LATCH);
   delay_us(1);
-  GPIO_WriteHigh(GPIOB, OVER);
-  //GPIO_WriteLow(GPIOE, SEG_LATCH);
+  GPIO_WriteHigh(GPIOE, SEG_LATCH);
 }
 
 void SEGMENT_Display(u8 *ROW1, u8 *ROW2)
