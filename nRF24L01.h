@@ -7,7 +7,7 @@
 #define BIT(x) (0x01 << (x))
 // For RF24 Module
 #define RF24_GPIO_PORT           (GPIOC)
-#define RF24_IRQ_GPIO_PINS      (GPIO_PIN_1) //Port G 0
+#define RF24_IRQ_GPIO_PINS      (GPIO_PIN_0) //Port G 0
 #define RF24_CE_GPIO_PINS       (GPIO_PIN_3) // Port C 3
 #define RF24_CSN_GPIO_PINS      (GPIO_PIN_4) // Port C 4
 

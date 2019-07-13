@@ -25,8 +25,8 @@ extern void nRF24L01_Pin_Conf(void)
 
 	SPI_Cmd(ENABLE);
 	/*For RF24 module. */
-	GPIO_DeInit(RF24_GPIO_PORT);
-	GPIO_DeInit(GPIOG);									 // reset
+	//GPIO_DeInit(RF24_GPIO_PORT);
+	//GPIO_DeInit(GPIOG);									 // reset
 	GPIO_Init(GPIOG, RF24_IRQ_GPIO_PINS, GPIO_MODE_IN_PU_NO_IT);// IRQ input active low
 	GPIO_Init(RF24_GPIO_PORT, RF24_CSN_GPIO_PINS, GPIO_MODE_OUT_PP_HIGH_FAST);
 	GPIO_Init(RF24_GPIO_PORT, RF24_CE_GPIO_PINS, GPIO_MODE_OUT_PP_HIGH_FAST);
@@ -80,7 +80,7 @@ extern void RF24_Setup(void)
 	Write_register_Single(EN_RXADDR, RF24_PIPE0_ENABLE);// Enable pipe0
 	Write_register_Single(SETUP_AW, RF24_AW_5_BYTE);//5 Byte RX/TX address field width
 	Write_register_Single(SETUP_RETR, RF24_ARC_DISABLE);// Disable auto-retransmiss
-	Write_register_Single(RX_PW_P0, 32);//Number of bytes in RX payload in data pipe 0
+	Write_register_Single(RX_PW_P0, 9);//Number of bytes in RX payload in data pipe 0
 	Write_register_Single(RF_SETUP, (Read_register_Single(RF_SETUP) | RF24_PWR_Max) & (~(1 << 3))); // Power Max,1Mbps,NLA on
 	Write_register_Single(CONFIG,
 					RF24_PRIM_RX|RF24_PWR_DOWN|RF24_CRC_ENABLE|RF24_CRC_2_BYTE|BIT(RX_DR)|BIT(TX_DS)|BIT(MAX_RT));
@@ -192,7 +192,8 @@ extern void RF24_Information(void)
 	UART2_Send_Byte(Read_register_Single(STATUS));
 	UART2_Send_Byte(Read_register_Single(RX_ADDR_P0));
 	UART2_Send_Byte(Read_register_Single(0x17)); // FIFO status
-	UART2_Send_Byte('\n');
+	//UART2_Send_Byte('\n');
+	UART2_Send_Byte('\r');
 }
 
 //_________________________________________________________LOW lEVEL
