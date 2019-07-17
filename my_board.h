@@ -25,13 +25,13 @@ STM8S105C6T6
 #define VIBRATO GPIO_PIN_6
 #define BUZZER  GPIO_PIN_7
 // PORT C
-#define DIGIT6 GPIO_PIN_1
-#define DIGIT8 GPIO_PIN_2
-#define CE  GPIO_PIN_3
-#define CSN GPIO_PIN_4
-#define SPI_SCK GPIO_PIN_5
-#define SPI_MOSI GPIO_PIN_6
-#define SPI_MISO GPIO_PIN_7
+#define DIGIT6      GPIO_PIN_1
+#define DIGIT8      GPIO_PIN_2
+#define CE          GPIO_PIN_3
+#define CSN         GPIO_PIN_4
+#define SPI_SCK     GPIO_PIN_5
+#define SPI_MOSI    GPIO_PIN_6
+#define SPI_MISO    GPIO_PIN_7
 // PORT D
 #define TDX GPIO_PIN_5
 #define RDX GPIO_PIN_6
@@ -42,8 +42,8 @@ STM8S105C6T6
 #define DIGIT5 GPIO_PIN_6
 #define DIGIT4 GPIO_PIN_7
 // PORT G
-#define IRQ GPIO_PIN_0
-#define SEG_DATA GPIO_PIN_1
+#define IRQ         GPIO_PIN_0
+#define SEG_DATA    GPIO_PIN_1
 
 /*Function prototypes -----------------------------------------------*/
 //Delay Function
@@ -58,7 +58,7 @@ void HC595_Write(u8 Data);
 void HC595_Latch(void);
 // 7 Segment Function
 void SEGMENT_Display(u8 *ROW1, u8 *ROW2);
-
-
-
+// Timer2 interrupt of delay Alarm
+void Timer2_ISR_Start(void);
+void Timer2_ISR_Stop(void);
 #endif /* __MYBOARD_H */

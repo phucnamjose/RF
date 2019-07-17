@@ -27,21 +27,30 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm8s_it.h"
-
+#include "my_board.h"
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+//#define MODE_TX
 #define TX_BUFFER_SIZE (countof(TxBuffer) - 1)
 /* Private macro -------------------------------------------------------------*/
 #define countof(x)  (sizeof(x)/sizeof(*(x)))
 /* Private variables ---------------------------------------------------------*/
-u8 TxBuffer[] = "PHUC NAM";
-
-__IO u8 TxCounter = 0;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
 /* Public functions ----------------------------------------------------------*/
-
+#ifndef MODE_TX //For receive device
+// UART
+extern u8 Serial_buffer[7];
+extern u8 Address_Changed;
+u8 Serial_counter = 0;
+u8 Respond_data;
+u8 Serial_status = 0;
+// Alarm
+u8 LED_Counter = 0;
+u8 VIB_Counter = 0;
+u8 BUZZ_Counter = 0;
+#endif
 /** @addtogroup GPIO_Toggle
   * @{
   */
@@ -276,6 +285,52 @@ INTERRUPT_HANDLER(TIM1_CAP_COM_IRQHandler, 12)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
+  if(TIM2_GetITStatus( TIM2_IT_UPDATE))
+  {
+    // Basic unit 100ms
+    LED_Counter++;
+    BUZZ_Counter++;
+    VIB_Counter++;
+    // LED
+    if (LED_Counter == 1)
+    {
+      GPIO_WriteHigh( GPIOB, ZO);
+    }
+    if(LED_Counter == 2)
+    {
+      LED_Counter = 0;
+      GPIO_WriteLow(GPIOB, ZO);
+    }
+    // BUZZER
+    if (BUZZ_Counter == 1)
+    {
+      GPIO_WriteLow(GPIOB, BUZZER);
+    }
+    if (BUZZ_Counter == 2)
+    {
+      GPIO_WriteHigh(GPIOB, BUZZER);
+    }
+    if (BUZZ_Counter == 3)
+    {
+      GPIO_WriteLow(GPIOB, BUZZER);
+    }
+    if (BUZZ_Counter == 10)
+    {
+      BUZZ_Counter = 0;
+      GPIO_WriteHigh(GPIOB, BUZZER);
+    }
+    // VIBRATO
+    if (VIB_Counter == 12)
+    {
+      GPIO_WriteLow(GPIOB, VIBRATO);
+    }
+    if (VIB_Counter == 20)
+    {
+      GPIO_WriteHigh(GPIOB, VIBRATO);
+      VIB_Counter = 0;
+    }
+    TIM2_ClearITPendingBit(TIM2_IT_UPDATE);
+  }
 }
 
 /**
@@ -288,6 +343,7 @@ INTERRUPT_HANDLER(TIM1_CAP_COM_IRQHandler, 12)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
+
 }
 #endif /*STM8S903*/
 
@@ -368,13 +424,14 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
     /* In order to detect unexpected events during development,
        it is recommended to set a breakpoint on the following instruction.
     */
-   UART2_SendData8(TxBuffer[TxCounter++]);
-
-   if(TxCounter == TX_BUFFER_SIZE)
-   {
-    UART2_ITConfig(UART2_IT_TXE, DISABLE);
-   }
-  }
+#ifndef MODE_TX
+    if (UART2_GetITStatus(UART2_IT_TXE))
+    {
+      UART2_SendData8(Respond_data);
+      UART2_ITConfig(UART2_IT_TXE, DISABLE);
+    }
+ #endif   
+}
 
 /**
   * @brief  UART2 RX interrupt routine.
@@ -386,10 +443,33 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
     /* In order to detect unexpected events during development,
        it is recommended to set a breakpoint on the following instruction.
     */
-   u8 temp;
-   temp = (UART2_ReceiveData8() & 0x7F);
-   UART2_SendData8(temp);
-  }
+#ifndef MODE_TX
+    if (UART2_GetITStatus(UART2_IT_RXNE))
+    {
+      Respond_data = UART2_ReceiveData8();
+      if (Respond_data == 0x02)
+      {
+        Serial_status = 1; // Nhan chuoi
+        Serial_counter = 0;
+        Address_Changed = 0;
+      }
+      if (Serial_status == 1)
+      {
+        Serial_buffer[Serial_counter] = Respond_data;
+        Serial_counter++;
+        if (Serial_counter == 7)
+        {
+          Address_Changed = 1;
+          Serial_status = 0;
+          Serial_counter = 0;
+          // Ket thuc chuoi
+        }
+      }
+      Address_Changed = 1;
+      UART2_ITConfig(UART2_IT_TXE, ENABLE);
+    }
+#endif
+}
 #endif /* STM8S105*/
 
 #if defined(STM8S207) || defined(STM8S007) || defined(STM8S208) || defined (STM8AF52Ax) || defined (STM8AF62Ax)

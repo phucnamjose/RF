@@ -1,6 +1,5 @@
 #include "my_board.h"
 #include <intrinsics.h>
-//#include "nRF24L01.h"
 extern inline void delay_us(uint16_t us)
 {
   uint32_t i;
@@ -107,7 +106,7 @@ void SEGMENT_Display(u8 *ROW1, u8 *ROW2)
   HC595_Latch();
   GPIO_WriteLow(GPIOB, DIGIT1);
   GPIO_WriteLow(GPIOE, DIGIT5);
-  Delayms_TIMER4(2);
+  Delayms_TIMER4(1);
   GPIO_WriteHigh(GPIOB, DIGIT1);
   GPIO_WriteHigh(GPIOE, DIGIT5);
   // DIGIT2 ,  DIGIT6
@@ -116,7 +115,7 @@ void SEGMENT_Display(u8 *ROW1, u8 *ROW2)
   HC595_Latch();
   GPIO_WriteLow(GPIOB, DIGIT2);
   GPIO_WriteLow(GPIOC, DIGIT6);
-  Delayms_TIMER4(2);
+  Delayms_TIMER4(1);
   GPIO_WriteHigh(GPIOB, DIGIT2);
   GPIO_WriteHigh(GPIOC, DIGIT6);
   // DIGIT3,  DIGIT7
@@ -125,7 +124,7 @@ void SEGMENT_Display(u8 *ROW1, u8 *ROW2)
   HC595_Latch();
   GPIO_WriteLow(GPIOB, DIGIT3);
   GPIO_WriteLow(GPIOE, DIGIT7);
-  Delayms_TIMER4(2);
+  Delayms_TIMER4(1);
   GPIO_WriteHigh(GPIOB, DIGIT3);
   GPIO_WriteHigh(GPIOE, DIGIT7);
   // DIGIT4,  DIGIT8
@@ -134,9 +133,20 @@ void SEGMENT_Display(u8 *ROW1, u8 *ROW2)
   HC595_Latch();
   GPIO_WriteLow(GPIOE, DIGIT4);
   GPIO_WriteLow(GPIOC, DIGIT8);
-  Delayms_TIMER4(2);
+  Delayms_TIMER4(1);
   GPIO_WriteHigh(GPIOE, DIGIT4);
   GPIO_WriteHigh(GPIOC, DIGIT8);
 }
-
-
+void Timer2_ISR_Start(void)
+{
+  CLK_PeripheralClockConfig(CLK_PERIPHERAL_TIMER2, ENABLE); // Clock source
+  TIM2_TimeBaseInit( TIM2_PRESCALER_512, 3124);// 100 ms
+  TIM2_ClearFlag( TIM2_FLAG_UPDATE);// clear interrupt flag
+  TIM2_ITConfig( TIM2_IT_UPDATE, ENABLE);// enable interrupt
+  TIM2_Cmd( ENABLE);// Run
+}
+void Timer2_ISR_Stop(void)
+{
+  TIM2_Cmd(DISABLE);                                         // stop timer
+  CLK_PeripheralClockConfig(CLK_PERIPHERAL_TIMER2, DISABLE); // Clock source
+}
