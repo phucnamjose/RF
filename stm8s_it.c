@@ -31,9 +31,13 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 //#define MODE_TX
-#define TX_BUFFER_SIZE (countof(TxBuffer) - 1)
+
+
+
+
+//#define TX_BUFFER_SIZE (countof(TxBuffer) - 1)
 /* Private macro -------------------------------------------------------------*/
-#define countof(x)  (sizeof(x)/sizeof(*(x)))
+//#define countof(x)  (sizeof(x)/sizeof(*(x)))
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -285,6 +289,7 @@ INTERRUPT_HANDLER(TIM1_CAP_COM_IRQHandler, 12)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
+ #ifndef MODE_TX
   if(TIM2_GetITStatus( TIM2_IT_UPDATE))
   {
     // Basic unit 100ms
@@ -331,6 +336,7 @@ INTERRUPT_HANDLER(TIM1_CAP_COM_IRQHandler, 12)
     }
     TIM2_ClearITPendingBit(TIM2_IT_UPDATE);
   }
+  #endif
 }
 
 /**

@@ -26,7 +26,7 @@ u8 Rx_Data[10];
   #ifdef MODE_TX
   u8 receive = 0;
   u8 D1_Serial_status = 0;
-  u8 D1_Serial_BUFF[14];
+  u8 D1_Serial_BUFF[15];
   u8 D1_Serial_counter = 0;
 
 #else // RX_MODE
@@ -34,7 +34,7 @@ u8 Rx_Data[10];
   u8 ROW2[4] = {0xff, 0xff, 0xff, 0xff};
    int EEPROM_pointer;
   EEPROM_pointer = 0x4000;
-  u8 Alarm = 1;
+  u8 Alarm = 0;
 
 
   #endif
@@ -81,7 +81,7 @@ u8 Rx_Data[10];
         D1_Serial_BUFF[D1_Serial_counter] = receive;
         D1_Serial_counter++;
       }
-      if(D1_Serial_counter == 14)
+      if(D1_Serial_counter == 15)
       {
         if(receive == 0x03)
         {
@@ -141,7 +141,7 @@ u8 Rx_Data[10];
         flush_rx();
         RF24_reset_status();
         RF24_startListening();
-        if (Rx_Data[0] == 0x02 && Rx_Data[8] == 0x03)
+        if (Rx_Data[0] == 0x02 && Rx_Data[9] == 0x03)
         {
           ROW1[0] = 0x0C;// P.
           ROW1[1] = Code_Digit[Rx_Data[1] - 48]; // ascii
@@ -151,14 +151,14 @@ u8 Rx_Data[10];
           ROW2[1] = Code_Digit[Rx_Data[5] - 48];
           ROW2[2] = Code_Digit[Rx_Data[6] - 48];
           ROW2[3] = Code_Digit[Rx_Data[7] - 48];
-          Alarm = Rx_Data[9];
+          Alarm = Rx_Data[8];
        }
       }
       if( Alarm == 1)
       {
         // Turn on
         GPIO_WriteHigh(GPIOB, VIBRATO);
-        GPIO_WriteHigh(GPIOB, BUZZER);
+        //GPIO_WriteHigh(GPIOB, BUZZER);
         GPIO_WriteLow(GPIOB, ZO);
         Timer2_ISR_Start();
         Alarm = 2;
