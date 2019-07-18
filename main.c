@@ -3,8 +3,11 @@
 #include "nRF24L01.h"
 #include "data_processing.h"
 
-//#define MODE_TX
+#define MODE_TX
 
+#define ALARM_ON 0x41 // A
+#define ALARM_OFF 0x42 // B
+#define ALARM_IDLE 0x43// C
 /* Global variables ---------------------------------------------------------*/
 #ifdef MODE_TX 
 u8 Tx_MAC[5] = {0xE7, 0xE7, 0xE7, 0xE7, 0xE7};
@@ -17,7 +20,9 @@ u8 Rx_MAC[5] = {0xE7, 0xE7, 0xE7, 0xE7, 0xE7};
 const u8 Code_Digit[] = {0xC0, 0xF9, 0xA4, 0xB0, 0x99, 0x92, 0x82, 0xF8, 0x80, 0x90};
 volatile u8 Serial_buffer[7];
 volatile u8 Address_Changed = 0;
+volatile u8 Timeout = 0;
 u8 Rx_Data[10];
+
 #endif
  /* Main Function ---------------------------------------------------------*/
  int main(void)
@@ -34,10 +39,9 @@ u8 Rx_Data[10];
   u8 ROW2[4] = {0xff, 0xff, 0xff, 0xff};
    int EEPROM_pointer;
   EEPROM_pointer = 0x4000;
-  u8 Alarm = 0;
+  u8 Alarm = ALARM_OFF;
 
-
-  #endif
+#endif
   /* INIT */
    GPIO_Config();
    CLK_16MHZ_HSE();
@@ -154,22 +158,23 @@ u8 Rx_Data[10];
           Alarm = Rx_Data[8];
        }
       }
-      if( Alarm == 1)
+      if( Alarm == ALARM_ON)
       {
         // Turn on
         GPIO_WriteHigh(GPIOB, VIBRATO);
         //GPIO_WriteHigh(GPIOB, BUZZER);
         GPIO_WriteLow(GPIOB, ZO);
         Timer2_ISR_Start();
-        Alarm = 2;
+        Alarm = ALARM_IDLE;
       }
-      else if( Alarm == 0)
+      else if( Alarm == ALARM_OFF || Timeout > 70)
       {
         // Turn off
         GPIO_WriteLow(GPIOB, VIBRATO);
         GPIO_WriteLow(GPIOB, BUZZER);
         GPIO_WriteHigh(GPIOB, ZO);
         Timer2_ISR_Stop();
+        Timeout = RESET;
       }
     }
 #endif
