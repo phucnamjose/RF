@@ -429,14 +429,7 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
 {
     /* In order to detect unexpected events during development,
        it is recommended to set a breakpoint on the following instruction.
-    */
-#ifndef MODE_TX
-    if (UART2_GetITStatus(UART2_IT_TXE))
-    {
-      UART2_SendData8(Respond_data);
-      UART2_ITConfig(UART2_IT_TXE, DISABLE);
-    }
- #endif   
+    */ 
 }
 
 /**
@@ -472,7 +465,6 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
         }
       }
       Address_Changed = 1;
-      UART2_ITConfig(UART2_IT_TXE, ENABLE);
     }
 #endif
 }

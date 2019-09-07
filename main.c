@@ -3,7 +3,7 @@
 #include "nRF24L01.h"
 #include "data_processing.h"
 
-#define MODE_TX
+//#define MODE_TX
 
 #define ALARM_ON 0x41 // A
 #define ALARM_OFF 0x42 // B
@@ -122,13 +122,30 @@ u8 Rx_Data[10];
       // Check UART Change ID
       if ( Address_Changed == SET) // ID
       {
+        UART2_ITConfig(UART2_IT_RXNE_OR, DISABLE);
         if(Serial_buffer[0] == 0x02 && Serial_buffer[6] == 0x03)
         {
+          if(Serial_buffer[1] == 'D' && Serial_buffer[2] == 'D'  && Serial_buffer[3] == 'D'  && Serial_buffer[4] == 'D'  && Serial_buffer[5] == 'D')
+          {
+            Flash_readdata(Rx_MAC, 5, EEPROM_pointer);
+            UART2_Send_Byte(0x02);
+            for(int i = 0; i<5; i++)
+            {
+              UART2_Send_Byte(Rx_MAC[i]);
+            }
+            UART2_Send_Byte(0x03);
+          }
+          else
           {
             Flash_writedata((u8*) Serial_buffer + 1, 5, EEPROM_pointer);
             Flash_readdata(Rx_MAC, 5, EEPROM_pointer);
             RF24_RX_Address(Rx_MAC, 5);
+            for(int i = 0; i<7; i++)
+            {
+              UART2_Send_Byte(Serial_buffer[i]);
+            }
           }
+          UART2_ITConfig(UART2_IT_RXNE_OR, ENABLE);
         }
         Address_Changed = RESET;
         // for( int i = 0; i < 5; i++)
