@@ -39,7 +39,7 @@ u8 Rx_Data[10];
   u8 ROW2[4] = {0xff, 0xff, 0xff, 0xff};
    int EEPROM_pointer;
   EEPROM_pointer = 0x4000;
-  u8 Alarm = ALARM_OFF;
+  u8 Alarm = ALARM_ON;
 
 #endif
   /* INIT */
@@ -48,12 +48,12 @@ u8 Rx_Data[10];
    UART2_Init_User(9600);
    nRF24L01_Pin_Conf();
    RF24_Setup();
-  //  GPIO_WriteHigh( GPIOB, VIBRATO);
+   GPIO_WriteHigh( GPIOB, VIBRATO);
   //  GPIO_WriteLow(GPIOB, ZO);
   //  GPIO_WriteHigh(GPIOB, BUZZER);
   //  GPIO_WriteLow(GPIOB, BUZZER);
   //  GPIO_WriteHigh(GPIOB, ZO);
-  //  GPIO_WriteLow(GPIOB, VIBRATO);
+    GPIO_WriteLow(GPIOB, VIBRATO);
    
    //RF24_TX_Address(Tx_MAC, 5);
    //RF24_RX_Address(Rx_MAC, 5);
@@ -95,7 +95,7 @@ u8 Rx_Data[10];
             *(Tx_MAC + i) = D1_Serial_BUFF[i+1];
           }
           Tx_Data[0] = 0x02; // Start of Text
-          for (int i = 1; i < 9; i++) // 7 byte Data
+          for (int i = 1; i < 9; i++) // 8 byte Data
           {
             *(Tx_Data + i) = D1_Serial_BUFF[i + 5];
           }
@@ -122,7 +122,7 @@ u8 Rx_Data[10];
       // Check UART Change ID
       if ( Address_Changed == SET) // ID
       {
-        UART2_ITConfig(UART2_IT_RXNE_OR, DISABLE);
+        //UART2_ITConfig(UART2_IT_RXNE_OR, DISABLE);
         if(Serial_buffer[0] == 0x02 && Serial_buffer[6] == 0x03)
         {
           if(Serial_buffer[1] == 'D' && Serial_buffer[2] == 'D'  && Serial_buffer[3] == 'D'  && Serial_buffer[4] == 'D'  && Serial_buffer[5] == 'D')
@@ -145,7 +145,7 @@ u8 Rx_Data[10];
               UART2_Send_Byte(Serial_buffer[i]);
             }
           }
-          UART2_ITConfig(UART2_IT_RXNE_OR, ENABLE);
+          //UART2_ITConfig(UART2_IT_RXNE_OR, ENABLE);
         }
         Address_Changed = RESET;
         // for( int i = 0; i < 5; i++)
@@ -178,8 +178,7 @@ u8 Rx_Data[10];
       if( Alarm == ALARM_ON)
       {
         // Turn on
-        GPIO_WriteHigh(GPIOB, VIBRATO);
-        //GPIO_WriteHigh(GPIOB, BUZZER);
+        GPIO_WriteLow(GPIOB, VIBRATO);
         GPIO_WriteLow(GPIOB, ZO);
         Timer2_ISR_Start();
         Alarm = ALARM_IDLE;
@@ -190,6 +189,7 @@ u8 Rx_Data[10];
         GPIO_WriteLow(GPIOB, VIBRATO);
         GPIO_WriteLow(GPIOB, BUZZER);
         GPIO_WriteHigh(GPIOB, ZO);
+        Timer3_ISR_Stop();
         Timer2_ISR_Stop();
         Timeout = RESET;
       }

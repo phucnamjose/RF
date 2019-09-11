@@ -47,6 +47,7 @@
 // UART
 extern u8 Serial_buffer[7];
 extern u8 Address_Changed;
+extern u8  Timeout;
 u8 Serial_counter = 0;
 u8 Respond_data;
 u8 Serial_status = 0;
@@ -296,6 +297,7 @@ INTERRUPT_HANDLER(TIM1_CAP_COM_IRQHandler, 12)
     LED_Counter++;
     BUZZ_Counter++;
     VIB_Counter++;
+    Timeout++;
     // LED
     if (LED_Counter == 1)
     {
@@ -309,20 +311,23 @@ INTERRUPT_HANDLER(TIM1_CAP_COM_IRQHandler, 12)
     // BUZZER
     if (BUZZ_Counter == 1)
     {
-      GPIO_WriteLow(GPIOB, BUZZER);
+      Timer3_ISR_Start();
     }
     if (BUZZ_Counter == 2)
     {
-      GPIO_WriteHigh(GPIOB, BUZZER);
+      Timer3_ISR_Stop();
     }
-    if (BUZZ_Counter == 3)
+    if (BUZZ_Counter == 4)
     {
-      GPIO_WriteLow(GPIOB, BUZZER);
+      Timer3_ISR_Start();
+    }
+    if (BUZZ_Counter == 5)
+    {
+      Timer3_ISR_Stop();
     }
     if (BUZZ_Counter == 10)
     {
       BUZZ_Counter = 0;
-      GPIO_WriteHigh(GPIOB, BUZZER);
     }
     // VIBRATO
     if (VIB_Counter == 12)
@@ -365,6 +370,8 @@ INTERRUPT_HANDLER(TIM1_CAP_COM_IRQHandler, 12)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
+  GPIO_WriteReverse(GPIOB, BUZZER);
+  TIM3_ClearITPendingBit(TIM3_IT_UPDATE);
 }
 
 /**

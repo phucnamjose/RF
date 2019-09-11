@@ -61,4 +61,7 @@ void SEGMENT_Display(u8 *ROW1, u8 *ROW2);
 // Timer2 interrupt of delay Alarm
 void Timer2_ISR_Start(void);
 void Timer2_ISR_Stop(void);
+// Timer2 interrupt of BUZZER
+void Timer3_ISR_Start(void);
+void Timer3_ISR_Stop(void);
 #endif /* __MYBOARD_H */

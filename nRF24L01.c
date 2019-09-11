@@ -80,7 +80,7 @@ extern void RF24_Setup(void)
 	Write_register_Single(EN_RXADDR, RF24_PIPE0_ENABLE);// Enable pipe0
 	Write_register_Single(SETUP_AW, RF24_AW_5_BYTE);//5 Byte RX/TX address field width
 	Write_register_Single(SETUP_RETR, RF24_ARC_DISABLE);// Disable auto-retransmiss
-	Write_register_Single(RX_PW_P0, 9);//Number of bytes in RX payload in data pipe 0
+	Write_register_Single(RX_PW_P0, 10);//Number of bytes in RX payload in data pipe 0
 	Write_register_Single(RF_SETUP, (Read_register_Single(RF_SETUP) | RF24_PWR_Max) & (~(1 << 3))); // Power Max,1Mbps,NLA on
 	Write_register_Single(CONFIG,
 					RF24_PRIM_RX|RF24_PWR_DOWN|RF24_CRC_ENABLE|RF24_CRC_2_BYTE|BIT(RX_DR)|BIT(TX_DS)|BIT(MAX_RT));

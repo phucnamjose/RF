@@ -150,3 +150,16 @@ void Timer2_ISR_Stop(void)
   TIM2_Cmd(DISABLE);                                         // stop timer
   CLK_PeripheralClockConfig(CLK_PERIPHERAL_TIMER2, DISABLE); // Clock source
 }
+void Timer3_ISR_Start(void)
+{
+  CLK_PeripheralClockConfig(CLK_PERIPHERAL_TIMER3, ENABLE); // Clock source
+  TIM3_TimeBaseInit( TIM3_PRESCALER_64, 125);// 4k wave
+  TIM3_ClearFlag( TIM3_FLAG_UPDATE);// clear interrupt flag
+  TIM3_ITConfig( TIM3_IT_UPDATE, ENABLE);// enable interrupt
+  TIM3_Cmd( ENABLE);// Run
+}
+void Timer3_ISR_Stop(void)
+{
+  TIM3_Cmd(DISABLE);                                         // stop timer
+  CLK_PeripheralClockConfig(CLK_PERIPHERAL_TIMER3, DISABLE); // Clock source
+}
